@@ -2,6 +2,8 @@
 
 A comprehensive toolkit for testing and managing AWS Bedrock Automated Reasoning Policies across different AI frameworks.
 
+> **Note**: This project requires `uv` package manager. For installation instructions, visit [uv's homepage](https://docs.astral.sh/uv/).
+
 ## Quick Start
 
 ```bash
