@@ -16,7 +16,12 @@
       "expected_result": "VALID"
     },
     {
-      "question": "I bought a polo shirt for $200 two weeks ago. I retuned it. Can I have a refund?",
+      "question": "I bought a laptop for $1000 two years ago and returned it yesterday. Can I have a refund?",
+      "answer": "Yes, you are eligible for a refund.",
+      "expected_result": "INVALID"
+    },
+    {
+      "question": "I bought a polo shirt for $200 two weeks ago. I returned it. Can I have a refund?",
       "answer": "Yes, you are eligible for a refund.",
       "expected_result": "INVALID"
     }

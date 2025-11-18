@@ -16,8 +16,8 @@ Plan:
 1. Create AR policy in the console. Show the existing one, tests, ...
 2. Create Guardrails and use the AR policy.
 3. Show JSON test cases.
-4. Run static.
-5. Run bedrock (guardrials in the invocation).
-6. Run OpenAI with apply guardrails.
-7. Run Strands Agents with hook + apply guardrails (comapre to BedrockModel guardrails).
+4. Show code for static demo. Show apply_guardrail. Run it.
+5. Show code for Bedrock demo. Show guardrails in converse API (guardrials in the invocation). Run it.
+6. Show code for OpenAI demo. Show .env.example and use of OpenAI SDK. Show apply_guardrail. Run it.
+7. Show code for Strands Agents demo. Show hook + apply_guardrail (compare to BedrockModel guardrail config).
 8. Export AR policy (show raw JSON, CFN YAML + JSON).
