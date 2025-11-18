@@ -1,43 +1,23 @@
 {
   "test_cases": [
     {
-      "answer": "daysSincePurchase is equal to 31 and isRefundEligible is false",
-      "expected_result": "SATISFIABLE"
-    },
-    {
-      "answer": "daysSincePurchase is equal to 90 and isRefundEligible is true",
-      "expected_result": "INVALID"
-    },
-    {
-      "answer": "productCategory is equal to BOOKS and isRefundEligible is true",
-      "expected_result": "SATISFIABLE"
-    },
-    {
-      "answer": "purchasePrice is equal to 9 and isReturnRequired is false",
-      "expected_result": "SATISFIABLE"
-    },
-    {
-      "answer": "isRefundEligible is false and daysSincePurchase is equal to 31",
-      "expected_result": "SATISFIABLE"
-    },
-    {
-      "question": "I bought a laptop for $1000 two weeks ago. Can I get a refund if I return it today?",
-      "answer": "Yes.",
+      "question": "I bought a laptop for $1000 two weeks ago and returned it today. Can I get a refund?",
+      "answer": "Yes, you are eligible for a refund.",
       "expected_result": "VALID"
     },
     {
-      "question": "I bought a shirt yesterday. I paid $50. Can I return it for a refund?",
-      "answer": "Yes.",
+      "question": "I bought fresh vegetables for $5 yesterday. Can I get a refund?",
+      "answer": "Yes, you are eligible for a refund.",
       "expected_result": "INVALID"
     },
     {
-      "question": "I bought a laptop for $1000 two weeks ago. Can I have a refund? What should I do?",
-      "answer": "I am here to help. You need to return it within 30 days to get a refund.",
+      "question": "I bought a laptop for $1000 two weeks ago and returned it yesterday. Can I have a refund?",
+      "answer": "Yes, you are eligible for a refund.",
       "expected_result": "VALID"
     },
     {
-      "question": "I bought a polo shirt for $200 two weeks ago. Can I have a refund? What should I do?",
-      "answer": "I am here to help. Yes, you can get a refund.",
+      "question": "I bought a polo shirt for $200 two weeks ago. I retuned it. Can I have a refund?",
+      "answer": "Yes, you are eligible for a refund.",
       "expected_result": "INVALID"
     }
   ]

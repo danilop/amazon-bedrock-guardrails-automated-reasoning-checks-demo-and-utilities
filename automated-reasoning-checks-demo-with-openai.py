@@ -56,7 +56,7 @@ class InteractiveAutomatedReasoningTester:
 
         self.conversation_history: List[Dict[str, str]] = []
         self.system_prompt = (
-            "You are a customer support agent. You follow the provided refund policy."
+            "You are a customer support agent. You follow the provided refund policy. Reply with max 10 words."
         )
         self.refund_policy_path = DEFAULT_REFUND_POLICY_PATH
         self.refund_policy_text = None
@@ -136,7 +136,7 @@ class InteractiveAutomatedReasoningTester:
             if not self.refund_policy_text:
                 self.refund_policy_text = extract_pdf_text(self.refund_policy_path)
 
-            print("\n=�  Applying input guardrail...")
+            print("\n🔍  Applying input guardrail...")
             # Apply guardrail to input (question only)
             input_guardrail_response = self.apply_guardrail(question=user_message)
 
@@ -145,7 +145,7 @@ class InteractiveAutomatedReasoningTester:
                 "action" in input_guardrail_response
                 and input_guardrail_response["action"] == "GUARDRAIL_INTERVENED"
             ):
-                print("=� Input blocked by guardrail")
+                print("🛡️ Input blocked by guardrail")
                 return {
                     "blocked": True,
                     "stage": "input",
@@ -180,8 +180,18 @@ class InteractiveAutomatedReasoningTester:
 
                 # Extract assistant response
                 assistant_message = completion.choices[0].message.content
+                
+                # Extract reasoning from response (not passed to guardrails)
+                assistant_reasoning = None
+                if "<reasoning>" in assistant_message and "</reasoning>" in assistant_message:
+                    start_idx = assistant_message.find("<reasoning>")
+                    end_idx = assistant_message.find("</reasoning>") + len("</reasoning>")
+                    assistant_reasoning = assistant_message[start_idx:end_idx]
+                    # Remove reasoning tags from the message that goes to guardrails
+                    assistant_message = assistant_message[:start_idx] + assistant_message[end_idx:]
+                    assistant_message = assistant_message.strip()
 
-                print("\n=�  Applying output guardrail...")
+                print("\n🔍  Applying output guardrail...")
                 # Apply guardrail to output (question + answer)
                 output_guardrail_response = self.apply_guardrail(
                     question=user_message, answer=assistant_message
@@ -192,12 +202,13 @@ class InteractiveAutomatedReasoningTester:
                     "action" in output_guardrail_response
                     and output_guardrail_response["action"] == "GUARDRAIL_INTERVENED"
                 ):
-                    print("=� Output blocked by guardrail")
+                    print("🛡️ Output blocked by guardrail")
                     return {
                         "blocked": True,
                         "stage": "output",
                         "guardrail_response": output_guardrail_response,
                         "message": assistant_message,
+                        "reasoning": assistant_reasoning,
                         "usage": {
                             "input_tokens": completion.usage.prompt_tokens
                             if completion.usage
@@ -217,6 +228,7 @@ class InteractiveAutomatedReasoningTester:
                 return {
                     "blocked": False,
                     "message": assistant_message,
+                    "reasoning": assistant_reasoning,
                     "input_guardrail_response": input_guardrail_response,
                     "output_guardrail_response": output_guardrail_response,
                     "usage": {
@@ -260,9 +272,13 @@ class InteractiveAutomatedReasoningTester:
         # Add user message to conversation history
         self.conversation_history.append({"role": "user", "content": user_message})
 
+        # Display reasoning if present (before the message)
+        if "reasoning" in response and response["reasoning"]:
+            print(f"\n💭 Reasoning: {response['reasoning']}")
+
         # Display assistant response
         if "message" in response:
-            print(f"\n=� Assistant: {response['message']}")
+            print(f"\n🤖 Assistant: {response['message']}")
 
             # Only add to conversation history if not blocked
             if not response.get("blocked", False):
@@ -273,7 +289,7 @@ class InteractiveAutomatedReasoningTester:
         # Display if blocked
         if response.get("blocked", False):
             stage = response.get("stage", "unknown")
-            print(f"\n=�  Guardrail intervened at {stage} stage - content blocked")
+            print(f"\n🛡️  Guardrail intervened at {stage} stage - content blocked")
 
             # Extract automated reasoning findings from the blocking guardrail response
             if "guardrail_response" in response:
@@ -283,13 +299,13 @@ class InteractiveAutomatedReasoningTester:
         else:
             # Extract automated reasoning findings from both guardrail responses
             if "input_guardrail_response" in response:
-                print("\n=� Input Guardrail Assessment:")
+                print("\n📋 Input Guardrail Assessment:")
                 self.extract_and_print_automated_reasoning_results(
                     response["input_guardrail_response"]
                 )
 
             if "output_guardrail_response" in response:
-                print("\n=� Output Guardrail Assessment:")
+                print("\n📋 Output Guardrail Assessment:")
                 self.extract_and_print_automated_reasoning_results(
                     response["output_guardrail_response"]
                 )
@@ -298,14 +314,14 @@ class InteractiveAutomatedReasoningTester:
         if "usage" in response:
             usage = response["usage"]
             print(
-                f"\n=� Usage: Input tokens: {usage.get('input_tokens', 0)}, Output tokens: {usage.get('output_tokens', 0)}, Total: {usage.get('total_tokens', 0)}"
+                f"\n📊 Usage: Input tokens: {usage.get('input_tokens', 0)}, Output tokens: {usage.get('output_tokens', 0)}, Total: {usage.get('total_tokens', 0)}"
             )
 
     def show_help(self):
         """Display help information"""
         print(
             """
-=' Interactive Automated Reasoning Policy Tester (OpenAI SDK) Help
+🔧 Interactive Automated Reasoning Policy Tester (OpenAI SDK) Help
 ===================================================================
 
 This tool allows you to interactively test automated reasoning policies
@@ -320,12 +336,12 @@ Commands:
   /status  - Show current configuration
 
 Features:
-  " Interactive conversation using OpenAI SDK with AWS Bedrock
-  " Separate input and output guardrail enforcement
-  " Automated reasoning policy testing
-  " Conversation history maintained across interactions
-  " Shows detailed automated reasoning findings
-  " Token usage tracking
+  • Interactive conversation using OpenAI SDK with AWS Bedrock
+  • Separate input and output guardrail enforcement
+  • Automated reasoning policy testing
+  • Conversation history maintained across interactions
+  • Shows detailed automated reasoning findings
+  • Token usage tracking
 
 Configuration:
   Model: {model_id}
@@ -347,7 +363,7 @@ The guardrail will check both input and output for policy violations.
     def show_status(self):
         """Display current configuration status"""
         print(f"""
-=� Current Configuration
+📊 Current Configuration
 ========================
 Model ID: {self.model_id}
 Guardrail ID: {self.guardrail_id}
@@ -362,13 +378,13 @@ Policy Loaded: {self.refund_policy_text is not None}
         """Clear conversation history"""
         self.conversation_history.clear()
         # Note: We keep self.refund_policy_text loaded to avoid re-parsing the PDF
-        print("=�  Conversation history cleared")
+        print("🗑️  Conversation history cleared")
 
     def run_interactive_session(self):
         """
         Run the interactive session
         """
-        print("=� Starting interactive session with OpenAI SDK + AWS Bedrock...")
+        print("🚀 Starting interactive session with OpenAI SDK + AWS Bedrock...")
         print(
             "Type your message and press Enter. Use /help for commands, /quit to exit."
         )
@@ -377,14 +393,14 @@ Policy Loaded: {self.refund_policy_text is not None}
         while True:
             try:
                 # Get user input
-                user_input = input("\n=d You: ").strip()
+                user_input = input("\n👤 You: ").strip()
 
                 if not user_input:
                     continue
 
                 # Handle special commands
                 if user_input.lower() in ["/quit", "/exit", "/bye"]:
-                    print("=K Goodbye!")
+                    print("👋 Goodbye!")
                     break
                 elif user_input.lower() == "/help":
                     self.show_help()
@@ -403,10 +419,10 @@ Policy Loaded: {self.refund_policy_text is not None}
                 print("-" * 40)
 
             except KeyboardInterrupt:
-                print("\n\n=K Session interrupted. Goodbye!")
+                print("\n\n👋 Session interrupted. Goodbye!")
                 break
             except Exception as e:
-                print(f"L Error: {e}")
+                print(f"❌ Error: {e}")
 
 
 def main():
@@ -414,7 +430,7 @@ def main():
     Main function to run interactive automated reasoning policy tester with OpenAI SDK
     """
     # Load configuration
-    config = load_config(require_guardrail_id=True, load_test_cases_file=False)
+    config = load_config(require_guardrail_id=True, load_test_cases_file=False, use_openai_model=True)
 
     # Print configuration header
     print_config_header(

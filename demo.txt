@@ -1,0 +1,23 @@
+Name:
+
+refund-policy
+
+Descirption:
+
+Customer Support Refund Policy
+
+Describe the source content:
+
+I am building a chatbot to answer customer support refund quesitons. This document contains the policy to apply. Here's a sample Q&A:
+- Question: I bought a laptop for $1000 two weeks ago. Can I get a refund if I return it today?
+- Answer: Yes.
+
+Plan:
+1. Create AR policy in the console. Show the existing one, tests, ...
+2. Create Guardrails and use the AR policy.
+3. Show JSON test cases.
+4. Run static.
+5. Run bedrock (guardrials in the invocation).
+6. Run OpenAI with apply guardrails.
+7. Run Strands Agents with hook + apply guardrails (comapre to BedrockModel guardrails).
+8. Export AR policy (show raw JSON, CFN YAML + JSON).

@@ -98,6 +98,44 @@ Test case format in `automated_reasoning_test_cases.json`:
 }
 ```
 
+## Dafny Formal Verification Example
+
+The `dafny/` directory contains examples of formal verification using Dafny, demonstrating automated reasoning through mathematical proofs.
+
+### Verify the Fibonacci Implementation
+
+```bash
+dafny verify dafny/fib.dfy
+```
+
+This verifies that the `ComputeFib` method correctly implements the Fibonacci function according to its formal specification.
+
+### Build and Compile to Target Language
+
+```bash
+# Compile to C# (default)
+dafny build dafny/fib.dfy --target cs
+
+# Compile to Python
+dafny build dafny/fib.dfy --target py
+
+# Compile to Java
+dafny build dafny/fib.dfy --target java
+
+# Compile to JavaScript
+dafny build dafny/fib.dfy --target js
+
+# Compile to Go
+dafny build dafny/fib.dfy --target go
+
+# Compile to C++ (experimental)
+dafny build dafny/fib.dfy --target cpp
+```
+
+**Prerequisites**: Install Dafny from [dafny.org](https://dafny.org/) or via package manager.
+
+**What it demonstrates**: Formal verification ensures the iterative Fibonacci implementation matches the recursive specification, with loop invariants proving correctness at each step.
+
 ## Policy Export Tool
 
 Export AR policies to CloudFormation templates for infrastructure-as-code workflows.
@@ -210,6 +248,9 @@ ar-checks-demo/
 │   ├── automated_reasoning_common.py                   # Result extraction
 │   ├── config.py                                       # Configuration management
 │   └── pdf_utils.py                                    # PDF processing
+│
+├── dafny/                                              # Dafny examples
+│   └── fib.dfy                                         # Fibonacci with formal verification
 │
 ├── automated_reasoning_test_cases.json                 # Test cases for batch testing
 └── docs/

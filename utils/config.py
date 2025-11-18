@@ -14,7 +14,8 @@ from dotenv import load_dotenv
 
 
 DEFAULT_AWS_REGION = "us-east-1"
-DEFAULT_MODEL_ID = "openai.gpt-oss-20b-1:0"
+DEFAULT_OPENAI_MODEL_ID = "openai.gpt-oss-20b-1:0"
+DEFAULT_MODEL_ID = "us.amazon.nova-lite-v1:0"
 DEFAULT_GUARDRAIL_VERSION = "DRAFT"
 DEFAULT_TEST_CASES_FILE = "automated_reasoning_test_cases.json"
 
@@ -31,7 +32,7 @@ class ARConfig:
 
 
 def load_config(
-    require_guardrail_id: bool = True, load_test_cases_file: bool = False
+    require_guardrail_id: bool = True, load_test_cases_file: bool = False, use_openai_model: bool = False
 ) -> ARConfig:
     """
     Load configuration from environment variables.
@@ -39,6 +40,7 @@ def load_config(
     Args:
         require_guardrail_id: If True, prompts user if GUARDRAIL_ID is not set
         load_test_cases_file: If True, loads TEST_CASES_FILE from environment
+        use_openai_model: If True, uses DEFAULT_OPENAI_MODEL_ID as default instead of DEFAULT_MODEL_ID
 
     Returns:
         ARConfig object with loaded configuration
@@ -53,7 +55,8 @@ def load_config(
     guardrail_id = os.getenv("GUARDRAIL_ID", "YOUR_GUARDRAIL_ID")
     guardrail_version = os.getenv("GUARDRAIL_VERSION", DEFAULT_GUARDRAIL_VERSION)
     aws_region = os.getenv("AWS_REGION", DEFAULT_AWS_REGION)
-    model_id = os.getenv("MODEL_ID", DEFAULT_MODEL_ID)
+    default_model = DEFAULT_OPENAI_MODEL_ID if use_openai_model else DEFAULT_MODEL_ID
+    model_id = os.getenv("MODEL_ID", default_model)
     test_cases_file = (
         os.getenv("TEST_CASES_FILE", DEFAULT_TEST_CASES_FILE)
         if load_test_cases_file

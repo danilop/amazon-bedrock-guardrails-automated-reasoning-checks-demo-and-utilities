@@ -47,7 +47,7 @@ class InteractiveAutomatedReasoningTester:
         self.bedrock_runtime = boto3.client("bedrock-runtime", region_name=region)
         self.conversation_history: List[Message] = []
         self.system_prompt = (
-            "You are a customer support agent. You follow the provided refund policy."
+            "You are a customer support agent. You follow the provided refund policy. Reply with max 10 words"
         )
         self.refund_policy_path = DEFAULT_REFUND_POLICY_PATH
         self.refund_policy_text = None
@@ -94,7 +94,7 @@ class InteractiveAutomatedReasoningTester:
                 modelId=self.model_id,
                 messages=messages,
                 system=system,
-                inferenceConfig={"maxTokens": 2000, "temperature": 0.7, "topP": 0.9},
+#               inferenceConfig={"maxTokens": 2000, "temperature": 0.7, "topP": 0.9},
                 guardrailConfig={
                     "guardrailIdentifier": self.guardrail_id,
                     "guardrailVersion": self.guardrail_version,
